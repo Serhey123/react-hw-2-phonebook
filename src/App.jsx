@@ -22,7 +22,6 @@ class App extends Component {
   };
 
   onSubmitHandler = data => {
-    console.log(data);
     if (this.state.contacts.find(({ name }) => name === data.name)) {
       alert({
         text: `${data.name} is already in contacts`,
