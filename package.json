@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@pnotify/core": "^5.2.0",
     "prettier": "^2.8.1"
   }
 }

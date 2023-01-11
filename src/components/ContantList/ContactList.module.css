@@ -1,0 +1,48 @@
+.list {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact {
+  height: 25px;
+  padding-left: 80px;
+}
+
+.contact:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.btn {
+  opacity: 0;
+  visibility: hidden;
+  font-size: 1.3rem;
+  width: 60px;
+  height: 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(212, 31, 31);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease, font-size 0.1s ease, opacity 0.3s ease;
+}
+
+.btn:hover {
+  background-color: rgb(255, 0, 0);
+}
+
+.btn:active {
+  font-size: 1.2rem;
+  background-color: rgb(140, 58, 58);
+}
+
+.contact:hover .btn {
+  visibility: visible;
+  opacity: 1;
+}
+
+.name {
+  display: inline-block;
+  margin-right: 20px;
+}
