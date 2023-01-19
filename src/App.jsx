@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { alert } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
@@ -10,76 +10,60 @@ import ContactForm from './components/ContactForm/ContactForm';
 import Filter from './components/Filter/Filter';
 import ContactList from './components/ContantList/ContactList';
 
-class App extends Component {
-  state = {
-    contacts: [
+function App() {
+  const [contacts, setContacts] = useState(
+    JSON.parse(localStorage.getItem('contacts')) ?? [
       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
-    filter: '',
-  };
-  
-  componentDidUpdate(prevProps, prevState){
-    if(this.state.contacts !== prevState.contacts){
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts))
-    }
-  }
+  );
+  const [filter, setFilter] = useState('');
 
-  componentDidMount(){
-    const contacts = localStorage.getItem('contacts')
-    const parsedContacts = JSON.parse(contacts)
-    this.setState({contacts: parsedContacts})
-  }
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-  onSubmitHandler = data => {
-    if (this.state.contacts.find(({ name }) => name === data.name)) {
+  const onSubmitHandler = data => {
+    if (contacts.find(({ name }) => name === data.name)) {
       alert({
         text: `${data.name} is already in contacts`,
       });
       return;
     }
 
-    this.setState(({ contacts }) => ({ contacts: [data, ...contacts] }));
+    setContacts(prevState => [data, ...prevState]);
   };
 
-  deleteBtnHandler = e => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(({ name }) => name !== e.target.dataset.name),
-    }));
-  };
+  const filteredData = contacts.filter(({ name }) =>
+    name.toLowerCase().includes(filter.toLowerCase()),
+  );
 
-  handleInput = e => {
-    this.setState({ [e.currentTarget.name]: e.currentTarget.value });
-  };
+  return (
+    <React.StrictMode>
+      <Container>
+        <>
+          <Header />
+          <ContactForm onSubmitHandler={onSubmitHandler} />
 
-  render() {
-    const filteredData = this.state.contacts.filter(({ name }) =>
-      name.toLowerCase().includes(this.state.filter.toLowerCase()),
-    );
-
-    return (
-      <React.StrictMode>
-        <Container>
-          <>
-          <Header/>
-          <ContactForm onSubmitHandler={this.onSubmitHandler} />
-
-          <h2 style={{textAlign: 'center'}}>Contacts</h2>
+          <h2 style={{ textAlign: 'center' }}>Contacts</h2>
           <Filter
-            filterValue={this.state.filter}
-            handleInput={this.handleInput}
+            filterValue={filter}
+            handleInput={e => setFilter(e.currentTarget.value)}
           />
           <ContactList
             filteredData={filteredData}
-            btnHandler={this.deleteBtnHandler}
+            btnHandler={e =>
+              setContacts(prevState =>
+                prevState.filter(({ name }) => name !== e.target.dataset.name),
+              )
+            }
           />
-          </>
-        </Container>
-      </React.StrictMode>
-    );
-  }
+        </>
+      </Container>
+    </React.StrictMode>
+  );
 }
 
 export default App;
